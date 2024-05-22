@@ -9,7 +9,7 @@ exports.signup = (req, res) => {
 exports.signin = (req, res) => {
     adminService.signin(req.validatedData, req.db)
         .then(result => {
-            if (!result) {
+            if (result.length == 0) {
                 res.status(400).send("Admin not found");
             } else {
                 res.send(result);
@@ -47,3 +47,27 @@ exports.getBrandById = (req, res) => {
         })
         .catch(error => res.status(500).send(error.message));
 };
+
+exports.updateBrand = (req, res) => {
+    adminService.updateBrand(req.params.id, req.db, req.validatedData)
+        .then(result => {
+            if (result.length === 0 || result.affectedRows == 0) {
+                res.status(400).send("Brand could not updated");
+            } else {
+                res.send("Brand updated Successfully");
+            }
+        })
+        .catch(error => {
+            res.status(500).send(error.message);
+        })
+}
+exports.deleteBrand = (req, res) => {
+    adminService.deleteBrand(req.params.id, req.db)
+        .then(result => {
+            if (result.length == 0) {
+                res.status(400), send("Error deleting Brand");
+            } else {
+                res.send("Brand Deleted");
+            }
+        })
+}

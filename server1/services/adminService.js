@@ -19,3 +19,9 @@ exports.getBrands = (db) => {
 exports.getBrandById = (id, db) => {
     return adminModel.getBrandById(id, db);
 };
+exports.updateBrand = (id, db, data) => {
+    return adminModel.updateBrandById(id, db, data);
+}
+exports.deleteBrand = (id, db) => {
+    return adminModel.deleteBrand(id, db);
+}
