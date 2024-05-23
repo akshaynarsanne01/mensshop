@@ -69,15 +69,15 @@ exports.resetPassword = async (data, db) => {
     await executeQuery(db, updateQuery, [newPassword, email]);
 };
 
-exports.addBrand = async (data, db) => {
+exports.createBrand = async (data, db) => {
     return create(db, 'brand', data);
 };
 
-exports.getBrands = async (db) => {
+exports.fetchAllBrands = async (db) => {
     return readAll(db, 'brand');
 };
 
-exports.getBrandById = async (id, db) => {
+exports.fetchBrandById = async (id, db) => {
     return readById(db, 'brand', id);
 };
 
@@ -85,7 +85,7 @@ exports.updateBrandById = async (id, db, data) => {
     return updateById(db, 'brand', id, data);
 };
 
-exports.deleteBrand = async (id, db) => {
+exports.deleteBrandById = async (id, db) => {
     return deleteById(db, 'brand', id);
 };
 
@@ -109,7 +109,7 @@ exports.getCustomer = async (id, db) => {
     return readById(db, 'customer', id);
 };
 
-exports.addCategory = async (data, db) => {
+exports.createCategory = async (db,data) => {
     return create(db, 'category', data);
 };
 
@@ -117,15 +117,18 @@ exports.updateCategory = async (id, db, data) => {
     return updateById(db, 'category', id, data);
 };
 
-exports.categories = async (db) => {
+exports.fetchAllCategory = async (db) => {
     return readAll(db, 'category');
 };
 
-exports.category = async (id, db) => {
+exports.fetchCategoryById = async (id, db) => {
     return readById(db, 'category', id);
 };
+exports.deleteCategoryById = async (id, db) => {
+    return deleteById(db, 'category', id);
+};
 
-exports.addSubCategory = async (id, db, data) => {
+exports.createSubCategory = async (id, db, data) => {
     const subCategoryData = { ...data, category_id: id };
     return create(db, 'sub_category', subCategoryData);
 };
@@ -134,45 +137,74 @@ exports.updateSubCategory = async (id, db, data) => {
     return updateById(db, 'sub_category', id, data);
 };
 
-exports.subCategories = async (db) => {
+exports.fetchAllCategory = async (db) => {
     return readAll(db, 'sub_category');
 };
 
-exports.subCategory = async (id, db) => {
+exports.fetchSubCategoryById = async (id, db) => {
     return readById(db, 'sub_category', id);
 };
 
-exports.deleteSubCategory = async (id, db) => {
-    console.log("aa");
+exports.deleteSubCategoryById = async (id, db) => {
     return deleteById(db, 'sub_category', id);
 };
-exports.addColor = async (id, db, data) => {
+exports.createColor = async (db, data) => {
     return create(db, 'color', data);
 }
 exports.updateColor = async (id, db, data) => {
-    return updateById(db, 'color', { ...data, color_id: id });
+    return updateById(db, 'color', id,data);
 }
-exports.colors = async (db, data) => {
+exports.fetchAllColor = async (db, data) => {
     return readAll(db, 'color', data);
 }
-exports.color = async (id, db, data) => {
-    return readById(db, 'color', {...data,color_id:id});
+exports.fetchColorById = async (id, db) => {
+    return readById(db, 'color', id);
 }
-exports.deleteColor = async (id,db) =>{
+exports.deleteColorById = async (id,db) =>{
     return deleteById(db,'color',id);
 }
-exports.addSize = async (db,data) => {
+exports.createSize = async (db,data) => {
     return create(db,'size',data);
 }
 exports.updateSize = async (id,db,data) =>{
-    return updateById(db,'size',{...data,size_id:id});
+    return updateById(db,'size',id,data);
 }
-exports.sizes = async (db) =>{
+exports.fetchAllSize = async (db) =>{
     return readAll(db,'size');
 }
-exports.size = async (id,db) =>{
+exports.fetchSizeById = async (id,db) =>{
     return readById(db,'size',id);
 }
-exports.deleteSize = (req,res) =>{
+exports.deleteSizeById = (id,db) =>{
     return deleteById(db,'size',id);
+}
+exports.createProduct = (db,data) =>{
+    return create(db,'products',data);
+}
+exports.updateProduct = (id,db,data) =>{
+    return updateById(db,'products',id,data);
+}
+exports.fetchAllProduct = (db) =>{
+    return readAll(db,'products');
+}
+exports.fetchProductById = (id,db) =>{
+    return readById(db,'products',id);
+}
+exports.deleteProductById = (id,db) =>{
+    return deleteById(db,'products',id);
+}
+exports.createVariant = (db,data) =>{
+    return create(db,'product_variant',data);
+}
+exports.fetchAllVariant = (db) =>{
+    return readAll(db,'product_variant');
+}
+exports.fetchVariantById = (id,db) =>{
+    return readById(db,'product_variant',id);
+}
+exports.updateVariant = (id,db,data) =>{
+    return updateById(db,'product_variant',id,data);
+}
+exports.deleteVariantById = (id,db,data) =>{
+    return deleteById(db,'product_variant',id);
 }

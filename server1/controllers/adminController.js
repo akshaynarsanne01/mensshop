@@ -1,237 +1,263 @@
 const adminModel = require("../models/adminModel");
+const { sendSuccessResponse, sendFailResponse, sendErrorResponse } = require('../utils/responseUtils');
 
+// Admin Authentication Controllers
 exports.signup = (req, res) => {
     adminModel.signup(req.validatedData, req.db)
-        .then(() => res.send("Admin signed up successfully"))
-        .catch(error => res.status(500).send(error.message));
+        .then(() => sendSuccessResponse(res, 'Admin signed up successfully'))
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
 exports.signin = (req, res) => {
     adminModel.signin(req.validatedData, req.db)
         .then(result => {
             if (result.length === 0) {
-                res.status(400).send("Admin not found");
+                sendFailResponse(res, 400, 'Admin not found');
             } else {
-                res.send(result);
+                sendSuccessResponse(res, 'Admin signed in successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
 exports.resetPassword = (req, res) => {
     adminModel.resetPassword(req.validatedData, req.db)
-        .then(() => res.send("Password updated successfully"))
-        .catch(error => res.status(500).send(error.message));
+        .then(() => sendSuccessResponse(res, 'Password updated successfully'))
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.addBrand = (req, res) => {
-    adminModel.addBrand(req.validatedData, req.db)
-        .then(() => res.send("Brand added successfully"))
-        .catch(error => res.status(500).send(error.message));
-};
-
-exports.getBrands = (req, res) => {
-    adminModel.getBrands(req.db)
+// Brand Controllers
+exports.createBrand = (req, res) => {
+    adminModel.createBrand(req.validatedData, req.db)
         .then(result => {
-            if (result.length === 0) {
-                res.status(404).send("Brands not found");
+            if (result.affectedRows === 0) {
+                sendFailResponse(res, 404, 'Could not create brand');
             } else {
-                res.send(result);
+                sendSuccessResponse(res, 'Brand created successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.getBrandById = (req, res) => {
-    adminModel.getBrandById(req.params.id, req.db)
+exports.fetchAllBrands = (req, res) => {
+    adminModel.fetchAllBrands(req.db)
         .then(result => {
             if (result.length === 0) {
-                res.status(404).send("Brand not found");
+                sendFailResponse(res, 404, 'Brands not found');
             } else {
-                res.send(result);
+                sendSuccessResponse(res, 'Brands retrieved successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
+};
+
+exports.fetchBrandById = (req, res) => {
+    adminModel.fetchBrandById(req.params.id, req.db)
+        .then(result => {
+            if (result.length === 0) {
+                sendFailResponse(res, 404, `Brand with ID ${req.params.id} not found`);
+            } else {
+                sendSuccessResponse(res, 'Brand retrieved successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
 exports.updateBrand = (req, res) => {
     adminModel.updateBrandById(req.params.id, req.db, req.validatedData)
         .then(result => {
             if (result.affectedRows === 0) {
-                res.status(400).send("Brand could not be updated");
+                sendFailResponse(res, 404, `Brand with ID ${req.params.id} could not be updated`);
             } else {
-                res.send("Brand updated successfully");
+                sendSuccessResponse(res, 'Brand updated successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.deleteBrand = (req, res) => {
-    adminModel.deleteBrand(req.params.id, req.db)
+exports.deleteBrandById = (req, res) => {
+    adminModel.deleteBrandById(req.params.id, req.db)
         .then(result => {
             if (result.affectedRows === 0) {
-                res.status(400).send("Error deleting brand");
+                sendFailResponse(res, 404, `Brand with ID ${req.params.id} could not be deleted`);
             } else {
-                res.send("Brand deleted");
+                sendSuccessResponse(res, 'Brand deleted successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.addCategory = (req, res) => {
-    adminModel.addCategory(req.db, req.validatedData)
-        .then(result => res.send("Category added successfully"))
-        .catch(error => res.status(500).send(error.message));
+// Category Controllers
+exports.createCategory = (req, res) => {
+    adminModel.createCategory(req.db, req.validatedData)
+        .then(result => sendSuccessResponse(res, 'Category added successfully', result))
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
 exports.updateCategory = (req, res) => {
     adminModel.updateCategory(req.params.id, req.db, req.validatedData)
         .then(result => {
             if (result.affectedRows === 0) {
-                res.status(400).send("Unable to update category");
+                sendFailResponse(res, 404, `Category with ID ${req.params.id} could not be updated`);
             } else {
-                res.send("Category updated successfully");
+                sendSuccessResponse(res, 'Category updated successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.getCategories = (req, res) => {
-    adminModel.getCategories(req.db)
+exports.fetchAllCategory = (req, res) => {
+    adminModel.fetchAllCategory(req.db)
         .then(result => {
             if (result.length === 0) {
-                res.status(404).send("No categories found");
+                sendFailResponse(res, 404, 'No categories found');
             } else {
-                res.send(result);
+                sendSuccessResponse(res, 'Categories retrieved successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.getCategoryById = (req, res) => {
-    adminModel.getCategoryById(req.params.id, req.db)
+exports.fetchCategoryById = (req, res) => {
+    adminModel.fetchCategoryById(req.params.id, req.db)
         .then(result => {
             if (result.length === 0) {
-                res.status(404).send("Category not found");
+                sendFailResponse(res, 404, `Category with ID ${req.params.id} not found`);
             } else {
-                res.send(result);
+                sendSuccessResponse(res, 'Category retrieved successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.addSubCategory = (req, res) => {
-    adminModel.category(req.body.category_id, req.db)
+exports.deleteCategoryById = (req, res) => {
+    adminModel.deleteCategoryById(req.params.id, req.db)
+        .then(result => {
+            if (result.affectedRows === 0) {
+                sendFailResponse(res, 404, `Category with ID ${req.params.id} could not be deleted`);
+            } else {
+                sendSuccessResponse(res, 'Category deleted successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
+};
+
+// SubCategory Controllers
+exports.createSubCategory = (req, res) => {
+    adminModel.fetchCategoryById(req.body.category_id, req.db)
         .then(result => {
             if (result.length > 0 && result[0].category_id === req.body.category_id) {
-                return adminModel.addSubCategory(req.body.category_id, req.db, req.validatedData);
+                return adminModel.createSubCategory(req.body.category_id, req.db, req.validatedData);
             } else {
                 throw new Error("Category not found");
             }
         })
-        .then(() => res.send("Subcategory added successfully"))
-        .catch(error => res.status(500).send(error.message));
+        .then(result => sendSuccessResponse(res, 'Subcategory added successfully', result))
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
 exports.updateSubCategory = (req, res) => {
     adminModel.updateSubCategory(req.params.id, req.db, req.validatedData)
         .then(result => {
             if (result.affectedRows === 0) {
-                res.status(400).send("Unable to update subcategory");
+                sendFailResponse(res, 404, `Subcategory with ID ${req.params.id} could not be updated`);
             } else {
-                res.send("Subcategory updated successfully");
+                sendSuccessResponse(res, 'Subcategory updated successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.subCategories = (req, res) => {
-    adminModel.subCategories(req.db)
+exports.fetchAllCategory = (req, res) => {
+    adminModel.fetchAllCategory(req.db)
         .then(result => {
             if (result.length === 0) {
-                res.status(404).send("No subcategories found");
+                sendFailResponse(res, 404, 'No subcategories found');
             } else {
-                res.send(result);
+                sendSuccessResponse(res, 'Subcategories retrieved successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.subCategory = (req, res) => {
-    adminModel.subCategory(req.params.id, req.db)
+exports.fetchSubCategoryById = (req, res) => {
+    adminModel.fetchSubCategoryById(req.params.id, req.db)
         .then(result => {
             if (result.length === 0) {
-                res.status(404).send(`Subcategory with ID ${req.params.id} not found`);
+                sendFailResponse(res, 404, `Subcategory with ID ${req.params.id} not found`);
             } else {
-                res.send(result);
+                sendSuccessResponse(res, 'Subcategory retrieved successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.deleteSubCategory = (req, res) => {
-    adminModel.deleteSubCategory(req.params.id, req.db)
+exports.deleteSubCategoryById = (req, res) => {
+    adminModel.deleteSubCategoryById(req.params.id, req.db)
         .then(result => {
             if (result.affectedRows === 0) {
-                res.status(400).send(`Subcategory with ID ${req.params.id} not found`);
+                sendFailResponse(res, 404, `Subcategory with ID ${req.params.id} could not be deleted`);
             } else {
-                res.send("Subcategory deleted");
+                sendSuccessResponse(res, 'Subcategory deleted successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.addColor = (req, res) => {
-    console.log(req.validatedData);
-    adminModel.addColor(req.db, req.validatedData)
+// Color Controllers
+exports.createColor = (req, res) => {
+    adminModel.createColor(req.db, req.validatedData)
         .then(result => {
             if (result.affectedRows === 0) {
-                res.status(400).send("Could not add color");
+                sendFailResponse(res, 404, 'Could not add color');
             } else {
-                res.send("Color added successfully");
+                sendSuccessResponse(res, 'Color added successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
 exports.updateColor = (req, res) => {
+
     adminModel.updateColor(req.params.id, req.db, req.validatedData)
         .then(result => {
             if (result.affectedRows === 0) {
-                res.status(400).send("Could not update color");
+                sendFailResponse(res, 404, `Color with ID ${req.params.id} could not be updated`);
             } else {
-                res.send("Color updated successfully");
+                sendSuccessResponse(res, 'Color updated successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => {
+            sendErrorResponse(res, error.message);
+        });
 };
 
-exports.colors = (req, res) => {
-    adminModel.colors(req.db)
+exports.fetchAllColor = (req, res) => {
+    adminModel.fetchAllColor(req.db)
         .then(result => {
             if (result.length === 0) {
-                res.status(404).send("No colors found");
+                sendFailResponse(res, 404, 'No colors found');
             } else {
-                res.send(result);
+                sendSuccessResponse(res, 'Colors retrieved successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.color = (req, res) => {
-    adminModel.color(req.params.id, req.db)
+exports.fetchColorById = (req, res) => {
+    adminModel.fetchColorById(req.params.id, req.db)
         .then(result => {
             if (result.length === 0) {
-                res.status(404).send(`Color with ID ${req.params.id} not found`);
+                sendFailResponse(res, 404, `Color with ID ${req.params.id} not found`);
             } else {
-                res.send(result);
+                sendSuccessResponse(res, 'Color retrieved successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.deleteColor = (req, res) => {
-    adminModel.deleteColor(req.params.id, req.db)
+exports.deleteColorById = (req, res) => {
+    adminModel.deleteColorById(req.params.id, req.db)
         .then(result => {
             if (result.affectedRows === 0) {
                 res.status(400).send(`Color with ID ${req.params.id} could not be deleted`);
@@ -241,66 +267,188 @@ exports.deleteColor = (req, res) => {
         })
         .catch(error => res.status(500).send(error.message));
 };
-exports.addSize = (req, res) => {
-    adminModel.addSize(req.db, req.validatedData)
+exports.createSize = (req, res) => {
+    adminModel.createSize(req.db, req.validatedData)
         .then(result => {
             if (result.affectedRows === 0) {
-                res.status(400), send("Coundnot add size");
+                sendFailResponse(res, 404, 'Could not add size');
             } else {
-                res.send("size Added");
+                sendSuccessResponse(res, 'size added successfully', result);
             }
         })
-        .catch(error => res.status(500).send(error.message));
+        .catch(error => sendErrorResponse(res, error.message));
 }
-exports.updateSize = (req,res) => {
-    adminModel.updateSize(req.params.id,req.db,req.validatedData)
-        .then(result =>{
-            if(result.length === 0 || result.affectedRows === 0){
-                res.status(400).send(`Size with ${req.params.id} could not updated`);
-            }else{
-                res.send("size updated");
-            }
-        })
-        .catch(error => {
-            res.status(500).send(error.message);
-        })
-}
-exports.sizes = (req,res) => {
-    adminModel.sizes(req.db)
-        .then(result =>{
-            if(result.length === 0){
-                res.status(400).send("Sizes not found");
-            }else{
-                res.send(result);
-            }
-        })
-        .catch(error  => {
-            res.status(500).send(error.message);
-        })
-}
-exports.size = (req,res) => {
-    adminModel.size(req.params.id,req.db)
+exports.updateSize = (req, res) => {
+    adminModel.updateSize(req.params.id, req.db, req.validatedData)
         .then(result => {
-            if(result.length === 0){
-                res.status(400).send(`size with the ${req.params.id} id not found`);
-            }else{
-                res.send(result);
+            if (result.affectedRows === 0) {
+                sendFailResponse(res, 404, `Size with ID ${req.params.id} could not be updated`);
+            } else {
+                sendSuccessResponse(res, 'Size updated successfully', result);
             }
         })
-        .catch(error => {
-            res.status(500).send(error.message);
-        })
+        .catch(error => sendErrorResponse(res, error.message));
 }
-exports.deleteSize = (req,res) =>{
-    adminModel.deleteSize(req.params.id,req.db)
+exports.fetchAllSize = (req, res) => {
+    adminModel.fetchAllSize(req.db)
         .then(result => {
-            if(result.affectedRows === 0){
-                res.status(400).send(`size with the ${req.params.id} is not found`);
-            }else{
-                res.send("size deleted");
+            if (result.length === 0) {
+                sendFailResponse(res, 404, 'No sizes found');
+            } else {
+                sendSuccessResponse(res, 'Sizes retrieved successfully', result);
             }
         })
-        .catch(error =>{
-            res.status(500).send(error.message);
+        .catch(error => sendErrorResponse(res, error.message));
+}
+exports.fetchSizeById = (req, res) => {
+    adminModel.fetchSizeById(req.params.id, req.db)
+        .then(result => {
+            if (result.length === 0) {
+                sendFailResponse(res, 404, `Size with ID ${req.params.id} not found`);
+            } else {
+                sendSuccessResponse(res, 'Size retrieved successfully', result);
+            }
         })
+        .catch(error => sendErrorResponse(res, error.message));
+}
+exports.deleteSizeById = (req, res) => {
+    adminModel.deleteSizeById(req.params.id, req.db)
+        .then(result => {
+            if (result.affectedRows === 0) {
+                sendFailResponse(res, 404, `Size with ID ${req.params.id} Could not deleted`);
+            } else {
+                sendSuccessResponse(res, 'Size Deleted successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
+}
+exports.createProduct = (req, res) => {
+    adminModel.createProduct(req.db, req.validatedData)
+        .then(result => {
+            if (result.affectedRows === 0) {
+                sendFailResponse(res, 404, 'Could not add product');
+            } else {
+                sendSuccessResponse(res, 'Product Added Successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
+}
+exports.updateProduct = (req, res) => {
+    adminModel.updateProduct(req.params.id, req.db, req.validatedData)
+        .then(result => {
+            if (result.affectedRows === 0) {
+                sendFailResponse(res, 404, `Product with ID ${req.params.id} could not be updated`);
+            } else {
+                sendSuccessResponse(res, 'Product updated successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
+}
+exports.fetchAllProduct = (req, res) => {
+    adminModel.fetchAllProduct(req.db)
+        .then(result => {
+            if (result.length === 0) {
+                sendFailResponse(res, 404, 'No Products found');
+            } else {
+                sendSuccessResponse(res, 'Products retrieved successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
+}
+exports.fetchProductById = (req, res) => {
+    adminModel.fetchProductById(req.params.id, req.db)
+        .then(result => {
+            if (result.length === 0) {
+                sendFailResponse(res, 404, `Product with ID ${req.params.id} not found`);
+            } else {
+                sendSuccessResponse(res, 'Product retrieved successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
+}
+exports.deleteProductById = (req, res) => {
+    adminModel.deleteProductById(req.params.id, req.db)
+        .then(result => {
+            if (result.affectedRows === 0) {
+                sendFailResponse(res, 404, `Product with ID ${req.params.id} Could not deleted`);
+            } else {
+                sendSuccessResponse(res, 'Product Deleted successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
+}
+exports.createVariant = async (req, res) => {
+    try {
+        const { product_id, size_id, color_id } = req.validatedData;
+        const product = await adminModel.fetchProductById(product_id, req.db);
+
+        if (product.length === 0) {
+            return sendFailResponse(res, 404, 'Product not found');
+        }
+        const size = await adminModel.fetchSizeById(size_id, req.db);
+        if (size.length === 0) {
+            return sendFailResponse(res, 404, 'size not found');
+        }
+        const color = await adminModel.fetchColorById(color_id, req.db);
+        if (color.length === 0) {
+            return sendFailResponse(res, 404, 'color not found');
+        }
+        const result = await adminModel.createVariant(req.db, req.validatedData);
+        if (result.affectedRows === 0) {
+            sendFailResponse(res, 404, 'Could not add variant');
+        } else {
+            sendSuccessResponse(res, 'Variant Added Successfully', result);
+        }
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            return sendFailResponse(res, 409, 'Variant already exists');
+        }
+        sendErrorResponse(res, error.message);
+    }
+}
+exports.updateVariant = async (req, res) => {
+    try {
+        const quantity = req.validatedData.quantity;
+        const result = await adminModel.updateVariant(req.params.id,req.db,{quantity});
+        if (result.affectedRows === 0) {
+            sendFailResponse(res, 404, 'Could not update variant');
+        } else {
+            sendSuccessResponse(res, 'Variant Updated Successfully', result);
+        }
+    } catch (error) {
+        sendErrorResponse(res, error.message);
+    }
+}
+exports.fetchAllVariant = (req, res) => {
+    adminModel.fetchAllVariant(req.db)
+        .then(result => {
+            if (result.length === 0) {
+                sendFailResponse(res, 404, 'No Variant found');
+            } else {
+                sendSuccessResponse(res, 'Variant retrieved successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
+}
+exports.fetchVariantById = (req, res) => {
+    adminModel.fetchVariantById(req.params.id,req.db)
+        .then(result => {
+            if (result.length === 0) {
+                sendFailResponse(res, 404, `Variant with ID ${req.params.id} not found`);
+            } else {
+                sendSuccessResponse(res, 'Variant retrieved successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
+}
+exports.deleteVariantById = (req, res) => {
+    adminModel.deleteVariantById(req.params.id,req.db)
+        .then(result => {
+            if (result.length === 0) {
+                sendFailResponse(res, 404, `Variant with ID ${req.params.id} Could not deleted`);
+            } else {
+                sendSuccessResponse(res, 'Variant Deleted successfully', result);
+            }
+        })
+        .catch(error => sendErrorResponse(res, error.message));
 }
