@@ -10,10 +10,40 @@ const executeQuery = async (db, query, params) => {
     });
 };
 
+// Generic CRUD operation functions
+const create = async (db, table, data) => {
+    const columns = Object.keys(data).join(',');
+    const placeholders = Object.keys(data).map(() => '?').join(',');
+    const values = Object.values(data);
+    const query = `INSERT INTO ${table} (${columns}) VALUES (${placeholders})`;
+    return executeQuery(db, query, values);
+};
+
+const readAll = async (db, table) => {
+    const query = `SELECT * FROM ${table}`;
+    return executeQuery(db, query, []);
+};
+
+const readById = async (db, table, id) => {
+    const query = `SELECT * FROM ${table} WHERE ${table}_id = ?`;
+    return executeQuery(db, query, [id]);
+};
+
+const updateById = async (db, table, id, data) => {
+    const columns = Object.keys(data).map(key => `${key} = ?`).join(',');
+    const values = Object.values(data);
+    const query = `UPDATE ${table} SET ${columns} WHERE ${table}_id = ?`;
+    return executeQuery(db, query, [...values, id]);
+};
+
+const deleteById = async (db, table, id) => {
+    const query = `DELETE FROM ${table} WHERE ${table}_id = ?`;
+    return executeQuery(db, query, [id]);
+};
+
+// Specific function exports using the generic functions
 exports.signup = async (data, db) => {
-    const qry = `INSERT INTO admin (full_name,email,password) VALUES (?,?,?)`;
-    const arguments = Object.values(data);
-    await executeQuery(db, qry, arguments);
+    return create(db, 'admin', data);
 };
 
 exports.signin = async (data, db) => {
@@ -39,43 +69,110 @@ exports.resetPassword = async (data, db) => {
     await executeQuery(db, updateQuery, [newPassword, email]);
 };
 
+exports.addBrand = async (data, db) => {
+    return create(db, 'brand', data);
+};
+
 exports.getBrands = async (db) => {
-    const selectQuery = `SELECT * FROM brand`;
-    return executeQuery(db, selectQuery, []);
+    return readAll(db, 'brand');
 };
 
 exports.getBrandById = async (id, db) => {
-    const selectQuery = `SELECT * FROM brand WHERE brand_id = ?`;
-    return executeQuery(db, selectQuery, [id]);
+    return readById(db, 'brand', id);
 };
-exports.updateBrandById = async (id, db, params) => {
-    const arguments = Object.values(params);
-    const updateQuery = `update brand set brand_name = ?, description = ? where brand_id = ?`;
-    return executeQuery(db, updateQuery, [...arguments, id]);
-}
+
+exports.updateBrandById = async (id, db, data) => {
+    return updateById(db, 'brand', id, data);
+};
+
 exports.deleteBrand = async (id, db) => {
-    const deleteQuery = `delete from brand where brand_id = ?`;
-    return executeQuery(db, deleteQuery, id);
-}
+    return deleteById(db, 'brand', id);
+};
 
 exports.getSizes = async (db) => {
-    const selectQuery = `select * from size`;
-    return executeQuery(db, selectQuery);
-}
-exports.getSize = async (id, db) => {
-    const selectQuery = `select * from size where size_id = ?`;
-    return executeQuery(db, selectQuery, id);
-}
-exports.getColors = async (db) => {
-    const selectQuery = `select * from color`;
-    return executeQuery(db, selectQuery);
-}
-exports.getCustomers = async (db) => {
-    const selectQuery = `select * from customer`;
-    return executeQuery(db, selectQuery);
-}
-exports.getCustomer = async (id, db) => {
-    const selectQuery = `select * from customer where customer_id = ?`;
-    return executeQuery(db, selectQuery, id);
-}
+    return readAll(db, 'size');
+};
 
+exports.getSize = async (id, db) => {
+    return readById(db, 'size', id);
+};
+
+exports.getColors = async (db) => {
+    return readAll(db, 'color');
+};
+
+exports.getCustomers = async (db) => {
+    return readAll(db, 'customer');
+};
+
+exports.getCustomer = async (id, db) => {
+    return readById(db, 'customer', id);
+};
+
+exports.addCategory = async (data, db) => {
+    return create(db, 'category', data);
+};
+
+exports.updateCategory = async (id, db, data) => {
+    return updateById(db, 'category', id, data);
+};
+
+exports.categories = async (db) => {
+    return readAll(db, 'category');
+};
+
+exports.category = async (id, db) => {
+    return readById(db, 'category', id);
+};
+
+exports.addSubCategory = async (id, db, data) => {
+    const subCategoryData = { ...data, category_id: id };
+    return create(db, 'sub_category', subCategoryData);
+};
+
+exports.updateSubCategory = async (id, db, data) => {
+    return updateById(db, 'sub_category', id, data);
+};
+
+exports.subCategories = async (db) => {
+    return readAll(db, 'sub_category');
+};
+
+exports.subCategory = async (id, db) => {
+    return readById(db, 'sub_category', id);
+};
+
+exports.deleteSubCategory = async (id, db) => {
+    console.log("aa");
+    return deleteById(db, 'sub_category', id);
+};
+exports.addColor = async (id, db, data) => {
+    return create(db, 'color', data);
+}
+exports.updateColor = async (id, db, data) => {
+    return updateById(db, 'color', { ...data, color_id: id });
+}
+exports.colors = async (db, data) => {
+    return readAll(db, 'color', data);
+}
+exports.color = async (id, db, data) => {
+    return readById(db, 'color', {...data,color_id:id});
+}
+exports.deleteColor = async (id,db) =>{
+    return deleteById(db,'color',id);
+}
+exports.addSize = async (db,data) => {
+    return create(db,'size',data);
+}
+exports.updateSize = async (id,db,data) =>{
+    return updateById(db,'size',{...data,size_id:id});
+}
+exports.sizes = async (db) =>{
+    return readAll(db,'size');
+}
+exports.size = async (id,db) =>{
+    return readById(db,'size',id);
+}
+exports.deleteSize = (req,res) =>{
+    return deleteById(db,'size',id);
+}

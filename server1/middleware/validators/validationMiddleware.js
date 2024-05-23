@@ -42,6 +42,14 @@ const brandValidationRules = () => [
     stringField('brand_name', { min: 5, max: 20 }),
     stringField('brand_description', { min: 5, max: 50 }).optional()
 ];
+const categoryValidationRules = () => [
+    stringField('category_name', { min: 5, max: 20 }),
+    stringField('description', { min: 5, max: 50 }),
+]
+const subCategoryValidationRules = () => [
+    stringField('sub_category_name', { min: 5, max: 20 }),
+    stringField('description', { min: 5, max: 50 }),
+]
 
 // Common validation handler
 const validate = (req, res, next) => {
@@ -59,5 +67,7 @@ module.exports = {
     loginValidationRules,
     resetValidationRules,
     brandValidationRules,
+    categoryValidationRules,
+    subCategoryValidationRules,
     validate
 };
