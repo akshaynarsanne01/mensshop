@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
+const upload = require('../middleware/upload');
 const {
     validate,
     validateSignupAdminresult,
@@ -45,18 +46,18 @@ router.route('/subcategory/:id')
     .delete(adminController.deleteSubCategoryById);
 
 router.route('/color')
-    .post(colorValidationRules(),validate,adminController.createColor)
+    .post(colorValidationRules(), validate, adminController.createColor)
     .get(adminController.fetchAllColor);
 router.route('/color/:id')
-    .put(colorValidationRules(),validate,adminController.updateColor)
+    .put(colorValidationRules(), validate, adminController.updateColor)
     .get(adminController.fetchColorById)
     .delete(adminController.deleteColorById);
 
 router.route('/size')
-    .post(sizeValidationRules(),validate,adminController.createSize)
+    .post(sizeValidationRules(), validate, adminController.createSize)
     .get(adminController.fetchAllSize);
 router.route('/size/:id')
-    .put(sizeValidationRules(),validate,adminController.updateSize)
+    .put(sizeValidationRules(), validate, adminController.updateSize)
     .get(adminController.fetchSizeById)
     .delete(adminController.deleteSizeById);
 
@@ -76,20 +77,7 @@ router.route('/variant/:id')
     .get(adminController.fetchVariantById)
     .delete(adminController.deleteVariantById);
 
-// router.route('/image')
-//     .post(adminController.addImage)
-//     .get(adminController.images);
-// router.route('/image/:id')
-//     .put(adminController.updateImage)
-//     .get(adminController.image)
-//     .delete(adminController.deleteImage);
-
-// router.route('/payment')
-//     .post(paymentController.addPayment)
-//     .get(paymentController.getPayments);
-// router.route('/payment/:id')
-//     .put(paymentController.updatePayment)
-//     .get(paymentController.getPaymentById)
-//     .delete(paymentController.deletePayment);
+router.route('/image')
+    .post(upload.single('image'),adminController.uploadImage);
 
 module.exports = router;

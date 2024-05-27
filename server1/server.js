@@ -21,7 +21,6 @@ app.use((req, res, next) => {
         next();
     });
 });
-
 app.use('/admin',admin);
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);

@@ -74,6 +74,7 @@ exports.createBrand = async (data, db) => {
 };
 
 exports.fetchAllBrands = async (db) => {
+    console.log("in brand")
     return readAll(db, 'brand');
 };
 
@@ -208,3 +209,16 @@ exports.updateVariant = (id,db,data) =>{
 exports.deleteVariantById = (id,db,data) =>{
     return deleteById(db,'product_variant',id);
 }
+exports.addImage = (db, data) => {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO product_images (variant_id, image_data, created_at, updated_at) VALUES (?, ?, ?, ?)';
+        console.log(query);
+        console.log( [data.variant_id, data.image_data, data.created_at, data.updated_at]);
+        db.query(query, [data.variant_id, data.image_data, data.created_at, data.updated_at], (err, result) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(result);
+        });
+    });
+};

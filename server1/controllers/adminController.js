@@ -1,6 +1,5 @@
 const adminModel = require("../models/adminModel");
 const { sendSuccessResponse, sendFailResponse, sendErrorResponse } = require('../utils/responseUtils');
-
 // Admin Authentication Controllers
 exports.signup = (req, res) => {
     adminModel.signup(req.validatedData, req.db)
@@ -409,7 +408,7 @@ exports.createVariant = async (req, res) => {
 exports.updateVariant = async (req, res) => {
     try {
         const quantity = req.validatedData.quantity;
-        const result = await adminModel.updateVariant(req.params.id,req.db,{quantity});
+        const result = await adminModel.updateVariant(req.params.id, req.db, { quantity });
         if (result.affectedRows === 0) {
             sendFailResponse(res, 404, 'Could not update variant');
         } else {
@@ -431,7 +430,7 @@ exports.fetchAllVariant = (req, res) => {
         .catch(error => sendErrorResponse(res, error.message));
 }
 exports.fetchVariantById = (req, res) => {
-    adminModel.fetchVariantById(req.params.id,req.db)
+    adminModel.fetchVariantById(req.params.id, req.db)
         .then(result => {
             if (result.length === 0) {
                 sendFailResponse(res, 404, `Variant with ID ${req.params.id} not found`);
@@ -442,7 +441,7 @@ exports.fetchVariantById = (req, res) => {
         .catch(error => sendErrorResponse(res, error.message));
 }
 exports.deleteVariantById = (req, res) => {
-    adminModel.deleteVariantById(req.params.id,req.db)
+    adminModel.deleteVariantById(req.params.id, req.db)
         .then(result => {
             if (result.length === 0) {
                 sendFailResponse(res, 404, `Variant with ID ${req.params.id} Could not deleted`);
@@ -452,3 +451,29 @@ exports.deleteVariantById = (req, res) => {
         })
         .catch(error => sendErrorResponse(res, error.message));
 }
+exports.uploadImage = async (req, res) => {
+    try {
+        if (!req.file) {
+            return sendFailResponse(res, 400, 'No file uploaded');
+        }
+
+        const imagePath = `/uploads/${req.file.filename}`;
+        const variantId = req.body.variant_id;
+
+        const result = await adminModel.addImage(req.db, {
+            variant_id: variantId,
+            image_data: imagePath,
+            created_at: new Date(),
+            updated_at: new Date()
+        });
+
+        if (result.affectedRows === 0) {
+            sendFailResponse(res, 404, 'Could not save image URL');
+        } else {
+            sendSuccessResponse(res, 'Image Uploaded Successfully', { image_url: imagePath });
+        }
+    } catch (error) {
+        sendErrorResponse(res, error.message);
+    }
+};
+
