@@ -6,7 +6,7 @@ import SubCategory from "./components/Subcategory.jsx";
 import Products from "./components/products.jsx";
 import ErrorPage from "./components/ErrorPage.jsx"
 import './index.css'
-import * as ReactDOM from "react-dom";
+import  ReactDOM from "react-dom/client";
 import {
     createBrowserRouter,
     RouterProvider,
