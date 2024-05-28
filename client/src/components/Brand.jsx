@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 //test
+//in brand
 const Brand = () => {
   const [allBrands, setAllBrands] = useState([]);
   const [error, setError] = useState(null);
