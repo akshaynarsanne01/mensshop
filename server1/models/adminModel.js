@@ -74,7 +74,6 @@ exports.createBrand = async (data, db) => {
 };
 
 exports.fetchAllBrands = async (db) => {
-    console.log("in brand")
     return readAll(db, 'brand');
 };
 
@@ -138,7 +137,7 @@ exports.updateSubCategory = async (id, db, data) => {
     return updateById(db, 'sub_category', id, data);
 };
 
-exports.fetchAllCategory = async (db) => {
+exports.fetchAllSubCategory = async (db) => {
     return readAll(db, 'sub_category');
 };
 

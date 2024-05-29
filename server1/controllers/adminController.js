@@ -167,8 +167,8 @@ exports.updateSubCategory = (req, res) => {
         .catch(error => sendErrorResponse(res, error.message));
 };
 
-exports.fetchAllCategory = (req, res) => {
-    adminModel.fetchAllCategory(req.db)
+exports.fetchAllSubCategory = (req, res) => {
+    adminModel.fetchAllSubCategory(req.db)
         .then(result => {
             if (result.length === 0) {
                 sendFailResponse(res, 404, 'No subcategories found');
