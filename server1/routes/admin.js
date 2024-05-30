@@ -39,7 +39,7 @@ router.route('/category/:id')
 
 router.route('/subcategory')
     .post(subCategoryValidationRules(), validate, adminController.createSubCategory)
-    .get(adminController.fetchAllCategory);
+    .get(adminController.fetchAllSubCategory);
 router.route('/subcategory/:id')
     .put(subCategoryValidationRules(), validate, adminController.updateSubCategory)
     .get(adminController.fetchSubCategoryById)
