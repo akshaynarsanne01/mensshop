@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import loading from "../assets/infinite-spinner.svg";
 
 const Brand = () => {
   const [allBrands, setAllBrands] = useState([]);
@@ -6,12 +7,14 @@ const Brand = () => {
   const [filteredBrands, setFilteredBrands] = useState([]);
   const [showAddBrandOverlay, setShowAddBrandOverlay] = useState(false);
   const [formData, setFormData] = useState({ brand_id: "", brand_name: "", description: "" });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch("http://localhost:3000/admin/brand");
       if (response.ok) {
@@ -24,6 +27,8 @@ const Brand = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -166,6 +171,11 @@ const Brand = () => {
               ))}
             </tbody>
           </table>
+          {isLoading && (
+            <div className="loading-container">
+              <img className="loading-img" src={loading} alt="Loading" />
+            </div>
+          )}
           {error && <div>Error: {error}</div>}
         </div>
       </div>

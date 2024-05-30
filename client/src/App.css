@@ -247,7 +247,9 @@ table input {
   border: 2px solid rgb(193, 200, 207);
   transition: all 0.1s ease-in-out;
 }
-
+.loading-img{
+  width: 10rem;
+}
 
 
 @keyframes slideIn {
