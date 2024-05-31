@@ -250,6 +250,23 @@ table input {
 .loading-img{
   width: 10rem;
 }
+.category-dropdown {
+  width: 95%;
+  font-size: 16px;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  color: #333;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  appearance: none;
+}
+/* 
+.category-dropdown:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+} */
 
 
 @keyframes slideIn {
